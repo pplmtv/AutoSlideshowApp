@@ -30,6 +30,8 @@ class MainActivity : AppCompatActivity(),View.OnClickListener {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
+        BT_START_STOP.text = "再生"
+
         BT_START_STOP.setOnClickListener(this)
         BT_NEXT.setOnClickListener(this)
         BT_PREVIOUS.setOnClickListener(this)
@@ -102,6 +104,7 @@ class MainActivity : AppCompatActivity(),View.OnClickListener {
 
     private fun getContentsInfoAuto(){
 
+        BT_START_STOP.text = "停止"
         BT_NEXT.isClickable = false
         BT_PREVIOUS.isClickable = false
         if (mTimer == null){
