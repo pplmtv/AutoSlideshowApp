@@ -19,18 +19,12 @@ import java.util.*
 class MainActivity : AppCompatActivity(),View.OnClickListener {
 
     private var cursor:Cursor? = null
-
     private var fieldIndex:Int = 0
     private var id:Long = 0
     private var imageUri: Uri? = null
-
-
     private val PERMISSIONS_REQUEST_CODE = 100
-
     private var mTimer: Timer? = null
-
     private var mHandler = Handler()
-
 
     override fun onCreate(savedInstanceState: Bundle?){
         super.onCreate(savedInstanceState)
@@ -49,30 +43,39 @@ class MainActivity : AppCompatActivity(),View.OnClickListener {
             null
         )
 
+        // Android 6.0以降の場合
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            // パーミッションの許可状態を確認する
+            if (checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
+                // 許可されている
+                getContensInfoFirst()
+            } else {
+                // 許可されていないので許可ダイアログを表示する
+                requestPermissions(
+                    arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE),
+                    PERMISSIONS_REQUEST_CODE
+                )
+            }
+            // Android 5系以下の場合
+        } else {
+            getContensInfoFirst()
+        }
+    }
+
+    override fun onRequestPermissionsResult(requestCode:Int,permissions:Array<String>,grantResults:IntArray) {
+        when (requestCode) {
+            PERMISSIONS_REQUEST_CODE ->
+                if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    getContensInfoFirst()
+                }
+        }
     }
 
     override fun onClick(v:View){
 
         when(v.id) {
             R.id.BT_START_STOP ->
-
-                // Android 6.0以降の場合
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                    // パーミッションの許可状態を確認する
-                    if (checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
-                        // 許可されている
-                        getContentsInfo()
-                    } else {
-                        // 許可されていないので許可ダイアログを表示する
-                        requestPermissions(
-                            arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE),
-                            PERMISSIONS_REQUEST_CODE
-                        )
-                    }
-                // Android 5系以下の場合
-                } else {
-                    getContentsInfo()
-                }
+                getContentsInfoAuto()
 
             R.id.BT_NEXT ->
                 getContensInfoNext()
@@ -82,16 +85,22 @@ class MainActivity : AppCompatActivity(),View.OnClickListener {
         }
     }
 
-    override fun onRequestPermissionsResult(requestCode:Int,permissions:Array<String>,grantResults:IntArray) {
-        when (requestCode) {
-            PERMISSIONS_REQUEST_CODE ->
-                if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    getContentsInfo()
-                }
+    private fun getContensInfoFirst(){
+
+        if (cursor!!.moveToFirst()){
+
+            // indexからIDを取得し、そのIDから画像のURIを取得する
+            fieldIndex = cursor!!.getColumnIndex(MediaStore.Images.Media._ID)
+            id = cursor!!.getLong(fieldIndex)
+            imageUri = ContentUris.withAppendedId(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, id)
+
+            imageView.setImageURI(imageUri)
+            Log.d("ANDROID", "URI : " + imageUri.toString())
+
         }
     }
 
-    private fun getContentsInfo(){
+    private fun getContentsInfoAuto(){
         if (mTimer == null){
             mTimer = Timer()
             mTimer!!.schedule(object:TimerTask(){
@@ -102,7 +111,7 @@ class MainActivity : AppCompatActivity(),View.OnClickListener {
 
                     }
                 }
-            },50,2000)
+            },2000,2000)
         }
     }
 
