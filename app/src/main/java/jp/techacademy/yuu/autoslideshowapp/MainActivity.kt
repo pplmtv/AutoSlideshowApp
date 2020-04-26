@@ -101,6 +101,9 @@ class MainActivity : AppCompatActivity(),View.OnClickListener {
     }
 
     private fun getContentsInfoAuto(){
+
+        BT_NEXT.isClickable = false
+        BT_PREVIOUS.isClickable = false
         if (mTimer == null){
             mTimer = Timer()
             mTimer!!.schedule(object:TimerTask(){
