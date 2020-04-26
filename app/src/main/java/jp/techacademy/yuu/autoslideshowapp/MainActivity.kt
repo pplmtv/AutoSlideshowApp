@@ -29,9 +29,6 @@ class MainActivity : AppCompatActivity(),View.OnClickListener {
 
     private var mTimer: Timer? = null
 
-    // タイマー用の時間のための変数
-    private var mTimerSec = 0.0
-
     private var mHandler = Handler()
 
 
@@ -99,14 +96,13 @@ class MainActivity : AppCompatActivity(),View.OnClickListener {
             mTimer = Timer()
             mTimer!!.schedule(object:TimerTask(){
                 override fun run(){
-                    mTimerSec += 2.0
                     mHandler.post{
 
                         getContensInfoNext()
 
                     }
                 }
-            },1000,1000)
+            },50,2000)
         }
     }
 
