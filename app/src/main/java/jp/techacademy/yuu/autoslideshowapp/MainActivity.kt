@@ -19,6 +19,7 @@ import java.util.*
 class MainActivity : AppCompatActivity(),View.OnClickListener {
 
     private var cursor:Cursor? = null
+    private var running_flg = 0
     private var fieldIndex:Int = 0
     private var id:Long = 0
     private var imageUri: Uri? = null
@@ -31,6 +32,7 @@ class MainActivity : AppCompatActivity(),View.OnClickListener {
         setContentView(R.layout.activity_main)
 
         BT_START_STOP.text = "再生"
+        running_flg = 0
 
         BT_START_STOP.setOnClickListener(this)
         BT_NEXT.setOnClickListener(this)
@@ -77,7 +79,11 @@ class MainActivity : AppCompatActivity(),View.OnClickListener {
 
         when(v.id) {
             R.id.BT_START_STOP ->
-                getContentsInfoAuto()
+                if (running_flg == 0) {
+                    getContentsInfoAuto()
+                } else {
+                    stopContentsInfo()
+                }
 
             R.id.BT_NEXT ->
                 getContensInfoNext()
@@ -107,6 +113,8 @@ class MainActivity : AppCompatActivity(),View.OnClickListener {
         BT_START_STOP.text = "停止"
         BT_NEXT.isClickable = false
         BT_PREVIOUS.isClickable = false
+        running_flg = 1
+
         if (mTimer == null){
             mTimer = Timer()
             mTimer!!.schedule(object:TimerTask(){
@@ -118,6 +126,19 @@ class MainActivity : AppCompatActivity(),View.OnClickListener {
                     }
                 }
             },2000,2000)
+        }
+    }
+
+    private fun stopContentsInfo(){
+
+        BT_START_STOP.text = "再生"
+        BT_NEXT.isClickable = true
+        BT_PREVIOUS.isClickable = true
+        running_flg = 0
+
+        if (mTimer != null){
+            mTimer!!.cancel()
+            mTimer = null
         }
     }
 
