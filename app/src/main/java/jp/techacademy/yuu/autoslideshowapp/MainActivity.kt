@@ -38,15 +38,6 @@ class MainActivity : AppCompatActivity(),View.OnClickListener {
         BT_NEXT.setOnClickListener(this)
         BT_PREVIOUS.setOnClickListener(this)
 
-        val resolver = contentResolver
-        cursor = resolver.query(
-            MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
-            null,
-            null,
-            null,
-            null
-        )
-
         // Android 6.0以降の場合
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             // パーミッションの許可状態を確認する
@@ -94,6 +85,15 @@ class MainActivity : AppCompatActivity(),View.OnClickListener {
     }
 
     private fun getContensInfoFirst(){
+
+        val resolver = contentResolver
+        cursor = resolver.query(
+            MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
+            null,
+            null,
+            null,
+            null
+        )
 
         if (cursor!!.moveToFirst()){
 
