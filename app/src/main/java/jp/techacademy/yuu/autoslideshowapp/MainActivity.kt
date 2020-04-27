@@ -62,6 +62,8 @@ class MainActivity : AppCompatActivity(),View.OnClickListener {
             PERMISSIONS_REQUEST_CODE ->
                 if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     getContensInfoFirst()
+                } else {
+                    finish()
                 }
         }
     }
